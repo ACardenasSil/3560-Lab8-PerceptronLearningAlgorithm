@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstdlib>
 
+const int NUM_SAMPLES = 150;
 /*
 *	Function that reads data from a CSV into a 2-D array.
 */
@@ -51,19 +52,31 @@ void displayValues(double(&array)[rows][cols]) {
 		std::cout << std::endl;
 	}
 }
-
+template <size_t attr_rows, size_t x_i, size_t weight_rows, size_t w_i>
+bool perceptron(double(&attributes)[attr_rows][x_i], double(&weights)[weight_rows][w_i], double theta, double alpha){
+    // for loop which classifies each element in array using if statement
+    for (int i = 0; i < attr_rows; i++) {
+        for (int j = 0; j < x_i; j++) {
+            double petal_length[1] = attributes[i][j];
+            label = (petal_length > threshold) ? 1.0:-1.0 ;
+            predicted_labels[i][0] = petal_length;
+            predicted_labels[i][1] = label;
+        }
+    }
+    
+    return 1;
+}
 
 int main(int argc, char* argv[])
 {
 	// Your code here
-    const int NUM_SAMPLES = 150;
     //[0-151:line][0:SepalLen, 1:SepalWid, 2:PetalLen, 3:PetalWid, 4:Species]
     double data[NUM_SAMPLES][5];
     double label; // Iris Virginica = 1 // NOT Iris Virginica = -1 
-    double threshold_value;
+    double threshold;
     double predicted_labels[NUM_SAMPLES][2];
 
-    double thresholdResult_pair[2]; //[threshold_value, percent_correct]
+    double thresholdResult_pair[2]; //[threshold, percent_correct]
 
 
     // Use readCSV to create data array
@@ -72,14 +85,14 @@ int main(int argc, char* argv[])
     std::cout << "\n---ground truths---\n" << std::endl;
     displayValues(data);
 
-    for (threshold_value = 0.0; threshold_value < 10; threshold_value += 0.1) {
+    for (threshold = 0.0; threshold < 10; threshold += 0.1) {
         double correct = 0.0;
         double percent_correct = 0.0;
     
         // for loop which classifies each element in array using if statement
         for (int i = 0; i < NUM_SAMPLES; i++) {
             double petal_length = data[i][2];
-            label = (petal_length > threshold_value) ? 1.0:-1.0 ;
+            label = (petal_length > threshold) ? 1.0:-1.0 ;
             predicted_labels[i][0] = petal_length;
             predicted_labels[i][1] = label;
         }
@@ -101,7 +114,7 @@ int main(int argc, char* argv[])
 
         if (thresholdResult_pair[1] < percent_correct) {
             thresholdResult_pair[1] = percent_correct;
-            thresholdResult_pair[0] = threshold_value;
+            thresholdResult_pair[0] = threshold;
         }
         std::cout << "\n---\nBest threshold: "<< thresholdResult_pair[0] << std::endl;
 
