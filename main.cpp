@@ -52,24 +52,43 @@ void displayValues(double(&array)[rows][cols]) {
 
 		std::cout << std::endl;
 	}
+} 
+
+template <size_t w_i, size_t x_i>
+double updateWeights(double (&weights)[w_i], double alpha, double input[x_i], double error) {
+    double newWeights[w_i];
+    for (int i = 0; i < w_i; i++) {
+        newWeights[i] = weights[i] + (alpha * input[i] * error); 
+    }
+    return newWeights;
 }
+
 template <size_t attr_rows, size_t x_i, size_t w_i>
 bool perceptron(double(&attributes)[attr_rows][x_i], double(&weights)[w_i], double theta, double alpha) {
     // for loop which classifies each element in array using if statement
+    //iterations 
+    bool output = true;
+    double newWeights[w_i]; //array initialized with same size
+    for (int i = 0; i < w_i; i++) {
+        newWeights[] = weights[i];
+    }
     for (int i = 0; i < attr_rows; i++) {
-        double sum[attr_rows];
-        for (int j = 0; j < x_i; j++) {
-            sum[i] += attributes[i][j] * weight[j];
-        }
-            if (sum[i] > theta) {
+        double isIris = 0;
 
-            //label = (attribute > threshold) ? 1.0:-1.0 ;
-            //predicted_labels[i][0] = attribute;
-            //predicted_labels[i][1] = label;
+        double sum[attr_rows];
+        // values and weights
+        for (int j = 0; j < x_i-1; j++) {
+            sum[i] += attributes[i][j] * weights[j];
         }
+        
+        // if true, then Iris Virginica else NOT Iris
+        isIris = (sum[i] > theta) ? 1.0 : -1.0;
+        
+        double error = attributes[i][4] - isIris;
+        newWeights = updateWeights(weights, alpha, attributes, error);
     }
     
-    return 1;
+    return output;
 }
 
 double init() {
@@ -80,16 +99,16 @@ double init() {
 int main(int argc, char* argv[])
 {
 	// Your code here
-    srand(time(0));
+    srand(time(0)); 
     // [0-151:line][0:SepalLen, 1:SepalWid, 2:PetalLen, 3:PetalWid, 4:Species]
-    double data[NUM_SAMPLES][5];
+    double data[NUM_SAMPLES][5]; 
     double label; // Iris Virginica = 1 // NOT Iris Virginica = -1 
-    double threshold;
-    double learning = 0.05;
+    double threshold; 
+    double learning = 0.05; 
 
-
-    double weights[4] = {init(), init(), init(), init()};
-    double predicted_labels[NUM_SAMPLES][2];
+    // set weights to random numbers from -0.5 to 0.5
+    double weights[4] = {init(), init(), init(), init()}; 
+    double predicted_labels[NUM_SAMPLES][2]; 
 
     double thresholdResult_pair[2]; //[threshold, percent_correct]
 
@@ -103,7 +122,7 @@ int main(int argc, char* argv[])
     for (threshold = 0.0; threshold < 10; threshold += 0.1) {
         double correct = 0.0;
         double percent_correct = 0.0;
-    
+
         // for loop which classifies each element in array using if statement
         perceptron(data, weights, threshold, learning);
         //std::cout << "\n---predicted labels---\n" << std::endl;
