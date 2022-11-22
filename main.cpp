@@ -54,41 +54,60 @@ void displayValues(double(&array)[rows][cols]) {
 	}
 } 
 
-template <size_t w_i, size_t x_i>
-double updateWeights(double (&weights)[w_i], double alpha, double input[x_i], double error) {
-    double newWeights[w_i];
-    for (int i = 0; i < w_i; i++) {
-        newWeights[i] = weights[i] + (alpha * input[i] * error); 
+template <size_t w_i>
+void printStatus(int iteration, double (&weights)[w_i], double error, int correct){
+    std::cout << "Iteration ";
+    std::cout << iteration;
+    std::cout << ": Weights are [";
+    for ( int i = 0; i < w_i; i++) {
+        std::cout << weights[i];
     }
-    return newWeights;
+    std::cout << "], classification was ";
+    if (error > 0.1 || error < -0.1) { //floating point fix
+        std::cout << "ERROR!";
+    } else {
+        std::cout << "CORRECT!";
+    }
+    std::cout << std::endl;
+    std::cout << "Correct " << correct << "out of 150" << std::endl;
+}
+
+template <size_t w_i, size_t x_i>
+double updateWeights(double (&weights)[w_i], double alpha, double (&input)[x_i], double error) {
+    for (int i = 0; i < w_i; i++) {
+        weights[i] = weights[i] + (alpha * input[i] * error); 
+    }
 }
 
 template <size_t attr_rows, size_t x_i, size_t w_i>
-bool perceptron(double(&attributes)[attr_rows][x_i], double(&weights)[w_i], double theta, double alpha) {
+void perceptron(double(&attributes)[attr_rows][x_i], double(&weights)[w_i], double theta, double alpha) {
     // for loop which classifies each element in array using if statement
     //iterations 
-    bool output = true;
-    double newWeights[w_i]; //array initialized with same size
-    for (int i = 0; i < w_i; i++) {
-        newWeights[] = weights[i];
-    }
+    int maxCorrect = 0;
+    int error=0;
     for (int i = 0; i < attr_rows; i++) {
         double isIris = 0;
-
+        double inputs[x_i-1];
         double sum[attr_rows];
+        //std::array<int,4> A = {10,20,30,40};
+        //std::array<int,4> B = A;
         // values and weights
         for (int j = 0; j < x_i-1; j++) {
-            sum[i] += attributes[i][j] * weights[j];
+            inputs[j] = attributes[i][j];
+            // sum x_i * w_i
+            sum[i] += inputs[j] * weights[j];
         }
         
         // if true, then Iris Virginica else NOT Iris
         isIris = (sum[i] > theta) ? 1.0 : -1.0;
         
-        double error = attributes[i][4] - isIris;
-        newWeights = updateWeights(weights, alpha, attributes, error);
+        //error will be either 1 or 0
+        double output = attributes[i][4] - isIris;
+        if (output > 0.1 || output < -0.1) {error = 1;} else {error = 0; maxCorrect++;}
+        printStatus(i, weights, error, maxCorrect);
+        updateWeights(weights, alpha, inputs, error);
     }
     
-    return output;
 }
 
 double init() {
@@ -118,17 +137,20 @@ int main(int argc, char* argv[])
 	// displayValues
     std::cout << "\n---ground truths---\n" << std::endl;
     displayValues(data);
-
+    /*
     for (threshold = 0.0; threshold < 10; threshold += 0.1) {
         double correct = 0.0;
         double percent_correct = 0.0;
 
         // for loop which classifies each element in array using if statement
+        */
         perceptron(data, weights, threshold, learning);
+        /*
         //std::cout << "\n---predicted labels---\n" << std::endl;
         //displayValues(predicted_labels);
         
         // compare predicted class with groundtruth.
+
 
         for (int i = 0; i < NUM_SAMPLES; i++){
             if ( predicted_labels[i][1] == data[i][4] ) {
@@ -140,12 +162,14 @@ int main(int argc, char* argv[])
         percent_correct = (correct / NUM_SAMPLES) * 100; 
         std::cout << percent_correct << "\% correct" << std::endl;
 
-        if (thresholdResult_pair[1] < percent_correct) {
-            thresholdResult_pair[1] = percent_correct;
+        if (thresholdResult_pair[1] < correct) {
+            thresholdResult_pair[1] = correct;
             thresholdResult_pair[0] = threshold;
         }
+        std::cout << out << std::endl;
+        std::cout << "\n---\nMost correct: "<< thresholdResult_pair[1] << std::endl;
         std::cout << "\n---\nBest threshold: "<< thresholdResult_pair[0] << std::endl;
-
     } 
+    */
     return 0;
 }
